@@ -1,0 +1,37 @@
+version: '2'
+services:
+  db:
+    container_name: dcopyright_db
+    image: postgres:10.3
+    restart: always
+    volumes:
+    - /home/benedict/Dockers/dcopyright/data:/var/lib/postgresql/data
+    ports:
+    - "5434:5432"
+  app:
+    container_name: dcopyright_app
+    image: benedictatortot/dcopyright:dcopyright_app
+    restart: always
+    env_file:
+    - .env_prod
+    links:
+    - db
+    volumes:
+    - /home/benedict/Dockers/dcopyright/public/system:/dcopyright/public/system
+    - /home/benedict/Dockers/dcopyright/log:/dcopyright/log
+    expose:
+    - "3000"
+  web:
+    container_name: dcopyright_web
+    image: benedictatortot/dcopyright:dcopyright_web
+    restart: always
+    env_file:
+    - .env_prod
+    links:
+    - app
+    expose:
+    - "80"
+networks:
+  default:
+    external:
+      name: nginx-proxy
